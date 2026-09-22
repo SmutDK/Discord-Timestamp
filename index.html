@@ -241,7 +241,7 @@
   <main>
     <section class="hero">
       <h1>Discord <span>Timestamp</span> Generator</h1>
-      <p>Create Discord timestamps in seconds. Select a date, hour and format — copy the result and paste it directly into Discord.</p>
+      <p>Create Discord timestamps. Select a date, time and format — copy the result and paste it directly into Discord.</p>
     </section>
 
     <section class="card">
@@ -252,13 +252,12 @@
         </div>
         <div>
           <label for="time">Time</label>
-          <input id="time" type="time" step="1">
+          <input id="time" type="time" step="60">
         </div>
         <div>
           <label for="format">Format</label>
           <select id="format">
             <option value="t">t — Short time (HH:MM)</option>
-            <option value="T">T — Long time (HH:MM:SS)</option>
             <option value="d">d — Short date</option>
             <option value="D">D — Long date</option>
             <option value="f">f — Short date and hour</option>
@@ -268,7 +267,7 @@
         </div>
       </div>
 
-      <div class="section-title" style="margin-top:20px;">◉ &nbsp; Preview</div>
+      <div class="section-title" style="margin-top:20px;">Preview</div>
       <div class="preview" id="preview"></div>
 
       <div class="actions">
@@ -287,12 +286,11 @@
 
     <div class="grid2">
       <section class="card">
-        <div class="section-title">▧ &nbsp; Timestamp formats</div>
+        <div class="section-title">Timestamp formats</div>
         <table>
           <thead><tr><th>Format</th><th>Example</th><th>Description</th></tr></thead>
           <tbody>
             <tr><td><code>t</code></td><td>12:34</td><td>Short time</td></tr>
-            <tr><td><code>T</code></td><td>12:34:56</td><td>Long time</td></tr>
             <tr><td><code>d</code></td><td>11/09/2026</td><td>Short date</td></tr>
             <tr><td><code>D</code></td><td>September 11, 2026</td><td>Long date</td></tr>
             <tr><td><code>f</code></td><td>September 11, 2026 12:34</td><td>Date and time</td></tr>
@@ -340,7 +338,7 @@
 
     function localDateTimeValue(date = new Date()) {
       dateEl.value = `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
-      timeEl.value = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+      timeEl.value = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
     function getSelectedDate() {
@@ -348,7 +346,7 @@
       const [y, m, d] = dateEl.value.split('-').map(Number);
       const [hh, mm, ss = 0] = timeEl.value.split(':').map(Number);
       // Construct local hour intentionally: Discord's Unix timestamp is timezone-independent.
-      return new Date(y, m - 1, d, hh, mm, ss);
+      return new Date(y, m - 1, d, hh, mm, 0);
     }
 
     const localeOptions = {
