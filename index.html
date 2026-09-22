@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Free Discord Timestamp Generator – create Discord timestamps in seconds.">
+  <title>Discord Timestamp Generator</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #11182a;
+      --card: rgba(22, 30, 49, .86);
+      --card2: rgba(29, 38, 61, .8);
+      --border: #2d3a57;
+      --text: #f4f7ff;
+      --muted: #9ca9c4;
+      --accent: #6675ff;
+      --accent2: #8a6cff;
+      --success: #4ade80;
+      --danger: #fb7185;
+      --shadow: 0 18px 55px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(102,117,255,.14), transparent 30%),
+        radial-gradient(circle at 85% 20%, rgba(138,108,255,.12), transparent 28%),
+        linear-gradient(145deg, var(--bg), #090d18 70%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .ghost {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px 15px;
+      color: var(--text);
+    }
+    .ghost:hover { background: rgba(255,255,255,.08); }
+
+    main { max-width: 1180px; margin: auto; padding: 56px 22px 42px; }
+    .hero { text-align: center; max-width: 800px; margin: 0 auto 38px; }
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      line-height: 1.02;
+      letter-spacing: -2.5px;
+      margin: 0 0 18px;
+    }
+    h1 span {
+      background: linear-gradient(90deg, #fff, #7985ff, #b087ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p { color: var(--muted); font-size: 17px; line-height: 1.65; margin: 0; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(14px);
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.15fr;
+      gap: 16px;
+    }
+    label { display:block; color: #dce3f4; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    input, select {
+      color-scheme: dark;
+      width: 100%;
+      height: 48px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: #141c2e;
+      color: var(--text);
+      padding: 0 13px;
+      outline: none;
+      font: inherit;
+    }
+    input:focus, select:focus { border-color: #7180ff; box-shadow: 0 0 0 3px rgba(102,117,255,.15); }
+
+    .actions {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .primary, .secondary {
+      min-height: 58px;
+      border-radius: 13px;
+      font-weight: 800;
+      font-size: 16px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 25px rgba(102,117,255,.24);
+    }
+    .secondary {
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .secondary:hover {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+    }
+    .primary:hover, .secondary:hover { transform: translateY(-1px); }
+
+    .section-title {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 13px;
+    }
+    .output {
+      position:relative;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .output code {
+      display:block;
+      width:100%;
+      padding: 15px 52px 15px 15px;
+      border:1px solid #465675;
+      border-radius: 11px;
+      background:#0d1424;
+      color:#e9edff;
+      font: 600 15px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow:auto;
+      white-space:nowrap;
+    }
+    .copy-small {
+      position:absolute;
+      right:7px;
+      top:7px;
+      width:36px;
+      height:36px;
+      border-radius:9px;
+      background:#394763;
+    }
+    .copy-small:hover { background:#4a5a7d; }
+    .preview {
+      margin-top: 16px;
+      padding: 14px;
+      min-height: 49px;
+      border:1px solid #2f3d5b;
+      border-radius:11px;
+      background:rgba(255,255,255,.035);
+      color:#eef2ff;
+    }
+    .preview strong { color:#aeb9ff; }
+
+    .grid2 {
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:20px;
+    }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { text-align:left; padding:11px 10px; border-bottom:1px solid rgba(255,255,255,.07); }
+    th { color:#9faccc; font-size:12px; text-transform:uppercase; letter-spacing:.6px; }
+    td code { color:#b8c1ff; background:rgba(102,117,255,.1); padding:3px 6px; border-radius:6px; }
+    .steps { margin:0; padding-left:22px; color:#c8d1e5; line-height:1.8; }
+    .note {
+      margin-top:18px;
+      padding:14px;
+      border-radius:12px;
+      background:rgba(102,117,255,.08);
+      border:1px solid rgba(102,117,255,.25);
+      color:#bfc9e3;
+      line-height:1.55;
+      font-size:13px;
+    }
+
+    footer {
+      max-width:1180px;
+      margin:auto;
+      padding: 6px 22px 34px;
+      color:#7f8ba6;
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      font-size:13px;
+    }
+
+    .toast {
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translate(-50%, 20px);
+      opacity:0;
+      pointer-events:none;
+      background:#18233a;
+      border:1px solid #3a4a6b;
+      color:#fff;
+      padding:12px 16px;
+      border-radius:11px;
+      box-shadow:var(--shadow);
+      transition:.22s ease;
+      z-index:20;
+    }
+    .toast.show { opacity:1; transform:translate(-50%, 0); }
+
+    dialog {
+      max-width:520px;
+      width:calc(100% - 30px);
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:#11182a;
+      color:var(--text);
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+    dialog::backdrop { background:rgba(0,0,0,.65); backdrop-filter:blur(4px); }
+    dialog h2 { margin-top:0; }
+    .close { float:right; }
+
+    @media (max-width: 850px) {
+      .controls, .grid2 { grid-template-columns:1fr; }
+      .actions { grid-template-columns:1fr; }
+      main { padding-top:38px; }
+      footer { flex-direction:column; }
+    }
+      /* Generated timestamp output is intentionally hidden. */
+    .generated-timestamp-card { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Discord <span>Timestamp</span> Generator</h1>
+      <p>Create Discord timestamps in seconds. Select a date, hour and format — copy the result and paste it directly into Discord.</p>
+    </section>
+
+    <section class="card">
+      <div class="controls">
+        <div>
+          <label for="date">Date</label>
+          <input id="date" type="date">
+        </div>
+        <div>
+          <label for="time">Time</label>
+          <input id="time" type="time" step="1">
+        </div>
+        <div>
+          <label for="format">Format</label>
+          <select id="format">
+            <option value="t">t — Short time (HH:MM)</option>
+            <option value="T">T — Long time (HH:MM:SS)</option>
+            <option value="d">d — Short date</option>
+            <option value="D">D — Long date</option>
+            <option value="f">f — Short date and hour</option>
+            <option value="F" selected>F — Full date and time</option>
+            <option value="R">R — Relative time</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:20px;">◉ &nbsp; Preview</div>
+      <div class="preview" id="preview"></div>
+
+      <div class="actions">
+        <button class="primary" id="copyBtn">▣ &nbsp; Copy to clipboard</button>
+        <button class="secondary" id="nowBtn">↻ &nbsp; Reset to now</button>
+      </div>
+    </section>
+
+    <section class="card generated-timestamp-card">
+      <div class="section-title">⌘ &nbsp; Generated timestamp</div>
+      <div class="output">
+        <code id="output">&lt;t:0:F&gt;</code>
+        <button class="copy-small" id="copySmall" title="Copy">⧉</button>
+      </div>
+    </section>
+
+    <div class="grid2">
+      <section class="card">
+        <div class="section-title">▧ &nbsp; Timestamp formats</div>
+        <table>
+          <thead><tr><th>Format</th><th>Example</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>t</code></td><td>12:34</td><td>Short time</td></tr>
+            <tr><td><code>T</code></td><td>12:34:56</td><td>Long time</td></tr>
+            <tr><td><code>d</code></td><td>11/09/2026</td><td>Short date</td></tr>
+            <tr><td><code>D</code></td><td>September 11, 2026</td><td>Long date</td></tr>
+            <tr><td><code>f</code></td><td>September 11, 2026 12:34</td><td>Date and time</td></tr>
+            <tr><td><code>F</code></td><td>Friday, September 11, 2026 12:34</td><td>Full date and time</td></tr>
+            <tr><td><code>R</code></td><td>in 2 hours</td><td>Relative time</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="section-title">⚙ &nbsp; How it works</div>
+        <ol class="steps">
+          <li>Select a date and time.</li>
+          <li>Choose the timestamp format.</li>
+          <li>Copy the generated code.</li>
+          <li>Paste it into Discord.</li>
+          <li>Discord displays the time in each recipient’s local timezone.</li>
+        </ol>
+        <div class="note">
+          Discord timestamps use Unix time (seconds since January 1, 1970).
+          This tool automatically converts the date and time into the correct Unix timestamp.
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div>♥ Made for the Discord community.</div>
+    <div>Client-side · No account · No tracking · v1.0.0</div>
+  </footer>
+
+  <div class="toast" id="toast">Copied!</div>
+
+
+
+  <script>
+    const dateEl = document.getElementById('date');
+    const timeEl = document.getElementById('time');
+    const formatEl = document.getElementById('format');
+    const outputEl = document.getElementById('output');
+    const previewEl = document.getElementById('preview');
+    const toastEl = document.getElementById('toast');
+
+    const pad = n => String(n).padStart(2, '0');
+
+    function localDateTimeValue(date = new Date()) {
+      dateEl.value = `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
+      timeEl.value = `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+
+    function getSelectedDate() {
+      if (!dateEl.value || !timeEl.value) return null;
+      const [y, m, d] = dateEl.value.split('-').map(Number);
+      const [hh, mm, ss = 0] = timeEl.value.split(':').map(Number);
+      // Construct local hour intentionally: Discord's Unix timestamp is timezone-independent.
+      return new Date(y, m - 1, d, hh, mm, ss);
+    }
+
+    const localeOptions = {
+      t: { hour: '2-digit', minute: '2-digit' },
+      T: { hour: '2-digit', minute: '2-digit', second: '2-digit' },
+      d: { day: '2-digit', month: '2-digit', year: 'numeric' },
+      D: { day: 'numeric', month: 'long', year: 'numeric' },
+      f: { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' },
+      F: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }
+    };
+
+    function relativeText(ms) {
+      const sec = Math.round(ms / 1000);
+      const abs = Math.abs(sec);
+      let value, unit;
+      if (abs < 60) { value = abs; unit = 'second'; }
+      else if (abs < 3600) { value = Math.round(abs/60); unit = 'minute'; }
+      else if (abs < 86400) { value = Math.round(abs/3600); unit = 'hour'; }
+      else if (abs < 2592000) { value = Math.round(abs/86400); unit = 'day'; }
+      else if (abs < 31536000) { value = Math.round(abs/2592000); unit = 'month'; }
+      else { value = Math.round(abs/31536000); unit = 'year'; }
+      if (value !== 1) {
+        const plurals = {
+          second: 'seconds',
+          minute: 'minutes',
+          hour: 'hours',
+          day: 'days',
+          month: 'months',
+          year: 'years'
+        };
+        unit = plurals[unit] || unit;
+      }
+      return ms >= 0 ? `in ${value} ${unit}` : `${value} ${unit} ago`;
+    }
+
+    function update() {
+      const date = getSelectedDate();
+      if (!date || Number.isNaN(date.getTime())) return;
+
+      const unix = Math.floor(date.getTime() / 1000);
+      const format = formatEl.value;
+      const timestamp = `<t:${unix}:${format}>`;
+      outputEl.textContent = timestamp;
+
+      if (format === 'R') {
+        previewEl.innerHTML = `<strong>${relativeText(date.getTime() - Date.now())}</strong>`;
+      } else {
+        const userLocale = navigator.language || 'en-US';
+        const userClock = new Intl.DateTimeFormat(userLocale, { hour: 'numeric' }).resolvedOptions();
+        const options = { ...localeOptions[format] };
+        if ('hour' in options) {
+          options.hour12 = userClock.hourCycle === 'h12' || userClock.hourCycle === 'h11';
+        }
+        const text = new Intl.DateTimeFormat(userLocale, options).format(date);
+        previewEl.textContent = text;
+      }
+    }
+
+    async function copyTimestamp() {
+      const text = outputEl.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 1600);
+    }
+
+    function setNow() {
+      localDateTimeValue(new Date());
+      update();
+    }
+
+    dateEl.addEventListener('input', update);
+    timeEl.addEventListener('input', update);
+    formatEl.addEventListener('change', update);
+    document.getElementById('copyBtn').addEventListener('click', copyTimestamp);
+    document.getElementById('copySmall').addEventListener('click', copyTimestamp);
+    document.getElementById('nowBtn').addEventListener('click', setNow);
+
+    setNow();
+    // Keep relative preview current when format R is selected.
+    setInterval(() => {
+      if (formatEl.value === 'R') update();
+    }, 1000);
+  </script>
+</body>
+</html>
